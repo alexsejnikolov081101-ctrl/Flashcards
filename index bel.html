@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap">
+<title>БЕЛ – флаш карти 10–12 клас</title>
+<style>
+:root{--bg:#d8c3a5;--fg:#2b2118;--mut:#5c4a3a;--card:#fff;--acc:#7a4f2b;--acc2:#f3e8d8;--ok:#17783f;--no:#b83232;--bd:#c4ab88;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;font-family:"Montserrat",system-ui,sans-serif!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;line-height:1.45}
+main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.4rem;margin:0 0 4px}
+.sub{color:var(--mut);font-size:.9rem;margin:0 0 14px;font-family:system-ui,sans-serif}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;font-family:system-ui,sans-serif}
+button{font:inherit;font-family:system-ui,sans-serif;border:1px solid var(--bd);background:var(--card);color:var(--fg);padding:9px 14px;border-radius:999px;cursor:pointer}
+button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.stat{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--mut);display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between;margin:14px 0 8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;min-height:230px;padding:22px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tag{font-family:system-ui,sans-serif;font-size:.75rem;color:var(--acc);background:var(--acc2);padding:3px 10px;border-radius:999px;align-self:flex-start;margin-bottom:14px}
+.q{font-size:1.2rem}
+.a{font-size:1.1rem;border-top:1px dashed var(--bd);margin-top:14px;padding-top:14px}
+.hint{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--mut);margin-top:14px}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.ctl button{border-radius:14px;padding:13px}
+.yes{border-color:var(--ok);color:var(--ok)}.no{border-color:var(--no);color:var(--no)}
+.note{font-family:system-ui,sans-serif;font-size:.78rem;color:var(--mut);margin-top:22px}
+</style>
+</head>
+<body>
+<main>
+<h1>📚 БЕЛ – флаш карти</h1>
+<p class="sub">Литература и български език · 10, 11 и 12 клас</p>
+<div class="row" id="grades"></div>
+<div class="row" id="kinds"></div>
+<div class="stat"><span id="pos"></span><span id="score"></span></div>
+<div class="card" id="card" role="button" tabindex="0"></div>
+<div class="ctl" id="ctl"><button class="no" id="again">✗ Не го знам</button><button class="yes" id="know">✓ Знам го</button></div>
+<div class="row"><button id="prev">← Назад</button><button id="next">Напред →</button><button id="shuf">🔀 Разбъркай</button><button id="grade">🎓 Оценка</button><button id="reset">Нулирай</button></div>
+<p class="note">Картите са съставени по учебното съдържание. Сверявай с учебника.</p>
+</main>
+<script>
+var C=[
+[10,"Литература","Кой е авторът на романа „Под игото“?","Иван Вазов."],
+[10,"Литература","Кой е авторът на „Хаджи Димитър“ и „На прощаване“?","Христо Ботев."],
+[10,"Литература","Какъв е жанрът на „Българският език“ от Вазов?","Ода – лирически жанр, който възхвалява нещо значимо (тук – родния език)."],
+[10,"Литература","Кой е авторът на „Бай Ганьо“ и какъв е жанрът?","Алеко Константинов. Сатирична проза – цикъл от разкази-фейлетони с общ герой."],
+[10,"Литература","Кой е авторът на „Епопея на забравените“?","Иван Вазов – лирически цикъл от оди за героите на Освободителните борби."],
+[10,"Литература","Кой е авторът на „Да се завърнеш в бащината къща“?","Димчо Дебелянов."],
+[10,"Литература","Кой автор е свързан със сборника „Безсъници“?","Пейо Яворов."],
+[10,"Литература","Какво е антитеза в художествен текст?","Противопоставяне на образи, идеи или понятия, което изостря смисъла."],
+[10,"Език","Кои са петте функционални стила?","Научен, официално-документален, публицистичен, художествен и разговорен."],
+[10,"Език","Кога се пише пълен член (-ът, -ят) при съществителни в мъжки род?","Когато думата е подлог в изречението. В останалите случаи – кратък член (-а, -я)."],
+[10,"Език","Как се пише „не“ с глаголи?","Отделно (не знам, не искам). Изключения: нямам, нехая, ненавиждам, неволя се."],
+[10,"Език","Какво е синоним? Дай пример.","Дума с еднакво или близко значение, напр. смел – храбър."],
+[11,"Литература","Кой е авторът на „Гераците“?","Елин Пелин."],
+[11,"Литература","Кой е авторът на „Песента на колелетата“ и в кой сборник е?","Йордан Йовков. Сборникът е „Старопланински легенди“."],
+[11,"Литература","Кой е авторът на „Железният светилник“?","Димитър Талев."],
+[11,"Литература","Кой е авторът на „Моторни песни“?","Никола Вапцаров."],
+[11,"Литература","Кой е авторът на стихосбирката „Да бъде ден!“?","Христо Смирненски."],
+[11,"Литература","Кой е авторът на поемата „Септември“ и към кое направление се отнася?","Гео Милев. Експресионизъм."],
+[11,"Литература","Кой е авторът на стихосбирката „Прозорец“?","Атанас Далчев."],
+[11,"Литература","Коя поетеса е авторка на „Вечната и святата“?","Елисавета Багряна."],
+[11,"Литература","Какво е символизъм?","Направление, което говори чрез символи и внушения, а не чрез директно назоваване. Свързва се с Яворов, Дебелянов, Лилиев."],
+[11,"Литература","Какво е метафора?","Пренос на значение по сходство между два предмета или явления, без да се използва „като“."],
+[11,"Литература","Какво е лирически герой?","Носителят на чувствата и мислите в лирическото стихотворение, гласът, през който се разкрива вътрешният свят."],
+[11,"Език","Кога се пише запетая пред „но“, „а“, „обаче“, „ала“?","Винаги – те свързват противопоставени части в сложното изречение или еднородни части."],
+[12,"Литература","Кой е авторът на романа „Тютюн“?","Димитър Димов."],
+[12,"Литература","Кой е авторът на романа „Хайка за вълци“?","Ивайло Петров."],
+[12,"Език","Какво са омонимите? Дай пример.","Думи с еднакво звучене и писане, но с различно значение: коса (на главата) и коса (за косене)."],
+[12,"Език","Какво е фразеологизъм?","Устойчиво съчетание от думи с преносен смисъл, напр. „гръм от ясно небе“."],
+[12,"Литература","Какво е художествен образ?","Конкретно, чувствено изображение на човек, предмет или събитие в произведението, което носи обобщен смисъл."],
+[12,"Литература","Какво е сатира?","Остро осмиване на недостатъци чрез хумор и ирония, напр. „Бай Ганьо“ на Алеко Константинов."],
+[12,"Език","Какво е плеоназъм? Дай пример.","Излишно повторение на смисъл. Пример: „главен лидер“, „първа премиера“."],
+[12,"Език","Каква е разликата между „ефектен“ и „ефективен“?","Ефектен – който прави силно впечатление. Ефективен – който дава резултат."],
+[12,"Език","Кои са основните белези на научния стил?","Термини, обективност, точност, логична последователност, безлично изложение."],
+[12,"Език","Кои са основните белези на публицистичния стил?","Актуалност, оценъчност, въздействие върху читателя, образни и експресивни средства."],
+[12,"Литература","Кои автори в програмата са свързани със символизма?","Пейо Яворов, Димчо Дебелянов, Теодор Траянов, Николай Лилиев."],
+[12,"Литература","Кой е авторът на „Албена“?","Йордан Йовков."],
+[10,"Литература","Кой е авторът на „Опълченците на Шипка“ и от кой цикъл е?","Иван Вазов. Стихотворението е от цикъла „Епопея на забравените“."],
+[11,"Литература","Кой е авторът на „Ян Бибиян“?","Елин Пелин."],
+[11,"Език","Какво е епитет? Дай пример.","Образна дума, която определя предмет и подчертава негов белег, напр. „златна есен“."],
+[12,"Език","Какво са еднородните части в изречението?","Части, които изпълняват една и съща синтактична функция и се отнасят към една и съща дума, напр. „Купих ябълки, круши и сливи“."]
+];
+var g=0,kind="",list=[],i=0,flip=false,known={},res=false;
+function $(x){return document.getElementById(x)}
+function btns(el,arr,cur,fn){el.innerHTML="";arr.forEach(function(a){var b=document.createElement("button");b.textContent=a[1];if(a[0]===cur)b.className="on";b.onclick=function(){fn(a[0])};el.appendChild(b)})}
+function build(){
+ list=C.map(function(c,n){return {c:c,n:n}}).filter(function(o){return (!g||o.c[0]===g)&&(!kind||o.c[1]===kind)});
+ for(var j=list.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=list[j];list[j]=list[r];list[r]=t}
+ i=0;flip=false;res=false;draw();
+}
+function menus(){
+ btns($("grades"),[[0,"Всички"],[10,"10 клас"],[11,"11 клас"],[12,"12 клас"]],g,function(v){g=v;menus();build()});
+ btns($("kinds"),[["","Всички теми"],["Литература","Литература"],["Език","Език"]],kind,function(v){kind=v;menus();build()});
+}
+function draw(){$("ctl").style.visibility=(flip&&list.length&&!res)?"visible":"hidden";
+ var k=0,w=0;Object.keys(known).forEach(function(n){if(known[n])k++;else w++});
+ $("score").innerHTML="<span style='color:var(--ok)'>✓ Верни: "+k+"</span> · <span style='color:var(--no)'>✗ Грешни: "+w+"</span> · от "+C.length;
+ if(res&&list.length){result();return}
+ if(!list.length){$("card").innerHTML="<div class='q'>Няма карти за този избор.</div>";$("pos").textContent="";return}
+ var o=list[i],c=o.c;
+ $("pos").textContent="Карта "+(i+1)+" от "+list.length+" · "+c[0]+" клас";
+ $("card").innerHTML="<span class='tag'>"+c[1]+"</span><div class='q'>"+c[2]+"</div>"+(flip?"<div class='a'>"+c[3]+"</div>":"<div class='hint'>Докосни картата, за да видиш отговора</div>");
+}
+function move(d){if(!list.length)return;i=(i+d+list.length)%list.length;flip=false;res=false;draw()}
+$("card").onclick=function(){flip=!flip;draw()};
+$("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();flip=!flip;draw()}};
+$("next").onclick=function(){move(1)};$("prev").onclick=function(){move(-1)};
+$("know").onclick=function(){if(list.length){known[list[i].n]=true;after()}};
+$("again").onclick=function(){if(list.length){known[list[i].n]=false;after()}};
+$("shuf").onclick=function(){for(var j=list.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=list[j];list[j]=list[r];list[r]=t}i=0;flip=false;res=false;draw()};
+$("reset").onclick=function(){known={};build()};
+function after(){if(list.every(function(o){return known[o.n]!==undefined})){res=true;draw()}else move(1)}
+function result(){
+ var k=0,a=0;list.forEach(function(o){if(known[o.n]!==undefined)a++;if(known[o.n])k++});
+ var t=list.length,p=Math.round(k/t*100);
+ var gr=p>=92?[6,"Отличен"]:p>=80?[5,"Мн. добър"]:p>=65?[4,"Добър"]:p>=50?[3,"Среден"]:[2,"Слаб"];
+ $("pos").textContent="Резултат";
+ $("card").innerHTML="<span class='tag'>Оценка</span><div style='font-size:3.2rem;font-weight:600;color:var(--acc)'>"+gr[0]+"</div><div class='q'>"+gr[1]+"</div><div class='a'>Верни: "+k+" от "+t+" ("+p+"%)"+(a<t?"<br>Неотговорени: "+(t-a)+" (броят се за грешни)":"")+"</div><div class='hint'>Скала: под 50% – 2, 50–64% – 3, 65–79% – 4, 80–91% – 5, от 92% – 6</div>";
+}
+$("grade").onclick=function(){if(list.length){res=true;draw()}};
+menus();build();
+</script>
+</body>
+</html>
